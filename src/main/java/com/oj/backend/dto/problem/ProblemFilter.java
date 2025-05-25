@@ -1,4 +1,4 @@
-package com.oj.backend.utils.filter;
+package com.oj.backend.dto.problem;
 
 import lombok.Data;
 

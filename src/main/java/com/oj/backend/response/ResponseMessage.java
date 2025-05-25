@@ -18,6 +18,14 @@ public class ResponseMessage<T> {
     private String message;     // 提示信息
     private T data;             // 返回数据
 
+    public static <T> ResponseMessage<T> success(T data) {
+        return new ResponseMessage<T>(200, "成功", data);
+    }
+
+    public static <T> ResponseMessage<T> error(String message) {
+        return new ResponseMessage<T>(500, message, null);
+    }
+
     public static <T> ResponseMessage<T> registerSuccess(T data) {
         return new ResponseMessage<T>(200, "注册成功", data);
     }
@@ -26,7 +34,7 @@ public class ResponseMessage<T> {
         return new ResponseMessage<T>(500, message, null);
     }
 
-    public static <T> ResponseMessage<T> problemUpdateSuccess(T data){
+    public static <T> ResponseMessage<T> problemUpdateSuccess(T data) {
         return new ResponseMessage<T>(200, "更新成功", data);
     }
 
@@ -34,9 +42,10 @@ public class ResponseMessage<T> {
         return new ResponseMessage<T>(500, message, null);
     }
 
-    public static <T> ResponseMessage<T> problemListGetSuccess(T data){
+    public static <T> ResponseMessage<T> problemListGetSuccess(T data) {
         return new ResponseMessage<T>(200, "列表获取成功", data);
     }
+
     public static <T> ResponseMessage<T> loginSuccess(T data) {
         return new ResponseMessage<T>(200, "登录成功", data);
     }

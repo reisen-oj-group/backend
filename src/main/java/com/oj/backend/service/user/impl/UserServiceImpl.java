@@ -3,6 +3,9 @@ package com.oj.backend.service.user.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.oj.backend.dto.user.LoginRequestDTO;
+import com.oj.backend.dto.user.LoginResponseDTO;
+import com.oj.backend.dto.user.UserIdDTO;
 import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.response.ResponseMessage;
@@ -41,10 +44,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseMessage<Map<String, Object>> login(Map<String, Object> request) {
-        String username = (String) request.get("username");
-        String password = (String) request.get("password");
-        boolean remember = request.get("remember") != null && (boolean) request.get("remember");
+    public ResponseMessage<LoginResponseDTO> login(LoginRequestDTO request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+        boolean remember = request.getRemember() != null && request.getRemember();
 
         User user = authenticate(username, password);
 
@@ -61,10 +64,18 @@ public class UserServiceImpl implements UserService {
                 .withExpiresAt(new Date(rememberTime))
                 .sign(Algorithm.HMAC256("SecretKey"));
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-        data.put("user", user);
+        LoginResponseDTO data = new LoginResponseDTO();
+        data.setToken(token);
+        data.setUser(user);
         return ResponseMessage.loginSuccess(data);
+    }
+
+    @Override
+    public ResponseMessage<User> returnUserMessage(UserIdDTO userId) {
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("id", userId.getUser()));
+        return user != null
+                ? ResponseMessage.success(user)
+                : ResponseMessage.error("该用户不存在");
     }
 
     private User authenticate(String username, String password) {

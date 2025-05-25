@@ -1,4 +1,4 @@
-package com.oj.backend.response;
+package com.oj.backend.dto.problem;
 
 import com.oj.backend.pojo.problem.Problem;
 import com.oj.backend.utils.result.Result;
