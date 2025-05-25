@@ -1,0 +1,18 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: SEwork
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/oj_system
+    username: root
+    password: zjh13159530487
+
+mybatis-plus:
+  type-handlers-package: com.baomidou.mybatisplus.extension.handlers
+  configuration:
+    map-underscore-to-camel-case: true
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    default-map-type-handler: com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler  # 新增
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
