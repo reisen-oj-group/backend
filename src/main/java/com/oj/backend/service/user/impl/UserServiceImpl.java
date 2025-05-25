@@ -3,20 +3,18 @@ package com.oj.backend.service.user.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.oj.backend.dto.user.LoginRequestDTO;
-import com.oj.backend.dto.user.LoginResponseDTO;
-import com.oj.backend.dto.user.UserIdDTO;
+import com.oj.backend.dto.request.user.LoginRequestDTO;
+import com.oj.backend.dto.response.user.LoginResponseVO;
+import com.oj.backend.dto.request.user.UserIdDTO;
 import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.user.User;
-import com.oj.backend.response.ResponseMessage;
+import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseMessage<LoginResponseDTO> login(LoginRequestDTO request) {
+    public ResponseMessage<LoginResponseVO> login(LoginRequestDTO request) {
         String username = request.getUsername();
         String password = request.getPassword();
         boolean remember = request.getRemember() != null && request.getRemember();
@@ -64,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 .withExpiresAt(new Date(rememberTime))
                 .sign(Algorithm.HMAC256("SecretKey"));
 
-        LoginResponseDTO data = new LoginResponseDTO();
+        LoginResponseVO data = new LoginResponseVO();
         data.setToken(token);
         data.setUser(user);
         return ResponseMessage.loginSuccess(data);

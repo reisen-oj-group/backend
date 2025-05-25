@@ -1,7 +1,6 @@
 package com.oj.backend.controller.config;
 
-import com.oj.backend.response.ResponseMessage;
-import com.oj.backend.response.SyncConfigResponse;
+import com.oj.backend.dto.response.config.SyncConfigResponse;
 import com.oj.backend.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

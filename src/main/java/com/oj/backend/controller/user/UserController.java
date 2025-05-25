@@ -1,19 +1,13 @@
 package com.oj.backend.controller.user;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.oj.backend.dto.user.LoginRequestDTO;
-import com.oj.backend.dto.user.LoginResponseDTO;
-import com.oj.backend.dto.user.UserIdDTO;
-import com.oj.backend.response.ResponseMessage;
-import com.oj.backend.mapper.user.UserMapper;
+import com.oj.backend.dto.request.user.LoginRequestDTO;
+import com.oj.backend.dto.response.user.LoginResponseVO;
+import com.oj.backend.dto.request.user.UserIdDTO;
+import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -34,7 +28,7 @@ public class UserController {
     }
     @PostMapping("/auth/login")
     //  用户登录
-    public ResponseMessage<LoginResponseDTO> login(@RequestBody LoginRequestDTO request){
+    public ResponseMessage<LoginResponseVO> login(@RequestBody LoginRequestDTO request){
         return userService.login(request);
     }
 }

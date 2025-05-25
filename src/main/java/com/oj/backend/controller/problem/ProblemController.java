@@ -1,12 +1,12 @@
 package com.oj.backend.controller.problem;
 
-import com.oj.backend.dto.problem.ProblemIdDTO;
-import com.oj.backend.dto.problem.ProblemResponseDTO;
+import com.oj.backend.dto.request.problem.ProblemIdDTO;
+import com.oj.backend.dto.response.problem.ProblemResponseVO;
 import com.oj.backend.pojo.problem.Problem;
-import com.oj.backend.dto.problem.ProblemListResponse;
-import com.oj.backend.response.ResponseMessage;
+import com.oj.backend.dto.response.problem.ProblemListVO;
+import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.service.problem.ProblemService;
-import com.oj.backend.dto.problem.ProblemFilter;
+import com.oj.backend.dto.request.problem.ProblemFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class ProblemController {
     ProblemService problemService;
 
     @PostMapping("")
-    public ResponseMessage<ProblemResponseDTO> returnProblemMessage(@RequestBody ProblemIdDTO problemIdDTO){
+    public ResponseMessage<ProblemResponseVO> returnProblemMessage(@RequestBody ProblemIdDTO problemIdDTO){
         return problemService.returnProblemMessage(problemIdDTO);
     }
 
@@ -30,7 +30,7 @@ public class ProblemController {
     }
 
     @PostMapping("/list")
-    public ResponseMessage<ProblemListResponse> getProblemList(@RequestBody ProblemFilter problemFilter){
+    public ResponseMessage<ProblemListVO> getProblemList(@RequestBody ProblemFilter problemFilter){
         return problemService.getProblemList(problemFilter);
     }
 }

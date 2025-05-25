@@ -1,4 +1,4 @@
-package com.oj.backend.dto.problem;
+package com.oj.backend.dto.request.problem;
 
 import lombok.Data;
 

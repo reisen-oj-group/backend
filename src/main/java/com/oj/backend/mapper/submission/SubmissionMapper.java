@@ -3,7 +3,7 @@ package com.oj.backend.mapper.submission;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.oj.backend.pojo.submission.Submission;
-import com.oj.backend.utils.result.Result;
+import com.oj.backend.pojo.submission.Result;
 
 import java.util.Collections;
 import java.util.List;

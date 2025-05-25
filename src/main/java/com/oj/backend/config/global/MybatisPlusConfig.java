@@ -1,4 +1,4 @@
-package com.oj.backend.config;
+package com.oj.backend.config.global;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

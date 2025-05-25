@@ -1,7 +1,5 @@
-package com.oj.backend.utils.converter;
+package com.oj.backend.utils.web;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

@@ -32,7 +32,7 @@ public class Submission {
     @TableField("evaluation_time")
     private LocalDateTime evaluationTime;   // 评测时间
 
-    private String lang;                    // 评测语言
+    private String lang;                    // 评测语言,C++17 (GCC9) Java 11 Python 3.8
 
     private String verdict;                 // 评测结果
 

@@ -1,9 +1,9 @@
-package com.oj.backend.response;
+package com.oj.backend.dto.response.config;
 
-import com.oj.backend.config.CodeLang;
-import com.oj.backend.config.Difficulty;
-import com.oj.backend.config.UserLang;
-import com.oj.backend.config.Verdict;
+import com.oj.backend.config.enums.CodeLang;
+import com.oj.backend.config.enums.Difficulty;
+import com.oj.backend.config.enums.UserLang;
+import com.oj.backend.config.enums.Verdict;
 import com.oj.backend.pojo.tag.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;

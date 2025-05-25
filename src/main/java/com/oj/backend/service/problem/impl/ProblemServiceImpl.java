@@ -2,21 +2,20 @@ package com.oj.backend.service.problem.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.oj.backend.dto.problem.ProblemIdDTO;
-import com.oj.backend.dto.problem.ProblemResponseDTO;
+import com.oj.backend.dto.request.problem.ProblemIdDTO;
+import com.oj.backend.dto.response.problem.ProblemResponseVO;
 import com.oj.backend.mapper.problem.ProblemMapper;
 import com.oj.backend.mapper.submission.SubmissionMapper;
 import com.oj.backend.pojo.problem.Problem;
-import com.oj.backend.dto.problem.ProblemListResponse;
-import com.oj.backend.response.ResponseMessage;
+import com.oj.backend.dto.response.problem.ProblemListVO;
+import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.service.problem.ProblemService;
-import com.oj.backend.dto.problem.ProblemFilter;
-import com.oj.backend.utils.result.Result;
+import com.oj.backend.dto.request.problem.ProblemFilter;
+import com.oj.backend.pojo.submission.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -27,7 +26,7 @@ public class ProblemServiceImpl implements ProblemService {
     SubmissionMapper submissionMapper;
 
     @Override
-    public ResponseMessage<ProblemListResponse> getProblemList(ProblemFilter problemFilter) {
+    public ResponseMessage<ProblemListVO> getProblemList(ProblemFilter problemFilter) {
         Page<Problem> page = new Page<>(problemFilter.getPage(), problemFilter.getPageSize());
 
         QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
@@ -41,7 +40,7 @@ public class ProblemServiceImpl implements ProblemService {
         List<Integer> problemIDs = problems.stream().map(Problem::getId).toList();
         List<Result> results = submissionMapper.findResultsByProblemsId(problemIDs, problemFilter.getUser());
 
-        ProblemListResponse response = new ProblemListResponse();
+        ProblemListVO response = new ProblemListVO();
         response.setProblems(problems);
         response.setResults(results);
         response.setTotal((int) problemPage.getTotal());
@@ -57,10 +56,10 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public ResponseMessage<ProblemResponseDTO> returnProblemMessage(ProblemIdDTO problemIdDTO) {
+    public ResponseMessage<ProblemResponseVO> returnProblemMessage(ProblemIdDTO problemIdDTO) {
         Problem problem = problemMapper.selectById(problemIdDTO.getProblem());
         Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem(), problemIdDTO.getUser());
-        return ResponseMessage.success(new ProblemResponseDTO(problem, result));
+        return ResponseMessage.success(new ProblemResponseVO(problem, result));
     }
 
     private void buildQueryWrapperForAllList(QueryWrapper<Problem> queryWrapper, ProblemFilter problemFilter) {

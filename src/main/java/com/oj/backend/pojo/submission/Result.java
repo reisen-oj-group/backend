@@ -1,4 +1,4 @@
-package com.oj.backend.utils.result;
+package com.oj.backend.pojo.submission;
 
 import com.oj.backend.pojo.submission.Submission;
 import lombok.Data;

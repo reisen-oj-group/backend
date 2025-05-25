@@ -1,6 +1,6 @@
-package com.oj.backend.config;
+package com.oj.backend.config.global;
 
-import com.oj.backend.utils.converter.StringToIntegerConverter;
+import com.oj.backend.utils.web.StringToIntegerConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

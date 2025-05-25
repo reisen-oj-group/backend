@@ -1,13 +1,12 @@
 package com.oj.backend.service.config.impl;
 
-import com.oj.backend.config.CodeLang;
-import com.oj.backend.config.Difficulty;
-import com.oj.backend.config.UserLang;
-import com.oj.backend.config.Verdict;
+import com.oj.backend.config.enums.CodeLang;
+import com.oj.backend.config.enums.Difficulty;
+import com.oj.backend.config.enums.UserLang;
+import com.oj.backend.config.enums.Verdict;
 import com.oj.backend.mapper.tag.TagMapper;
 import com.oj.backend.pojo.tag.Tag;
-import com.oj.backend.response.ResponseMessage;
-import com.oj.backend.response.SyncConfigResponse;
+import com.oj.backend.dto.response.config.SyncConfigResponse;
 import com.oj.backend.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service

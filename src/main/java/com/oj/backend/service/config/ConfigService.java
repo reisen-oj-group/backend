@@ -1,7 +1,6 @@
 package com.oj.backend.service.config;
 
-import com.oj.backend.response.ResponseMessage;
-import com.oj.backend.response.SyncConfigResponse;
+import com.oj.backend.dto.response.config.SyncConfigResponse;
 
 public interface ConfigService {
     SyncConfigResponse getConfig();

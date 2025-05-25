@@ -1,4 +1,4 @@
-package com.oj.backend.config;
+package com.oj.backend.config.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
