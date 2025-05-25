@@ -9,16 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @CrossOrigin
 public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseMessage<User> insert(@RequestBody User user) {
         return userService.register(user);
+    }
+    @PostMapping("/auth/login")
+    public ResponseMessage<Map<String, Object>> login(@RequestBody Map<String, Object> request){
+        return userService.login(request);
     }
 }

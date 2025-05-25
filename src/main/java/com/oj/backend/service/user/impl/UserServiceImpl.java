@@ -1,5 +1,7 @@
 package com.oj.backend.service.user.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.user.User;
@@ -9,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,5 +38,40 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
 
         return ResponseMessage.registerSuccess(user);
+    }
+
+    @Override
+    public ResponseMessage<Map<String, Object>> login(Map<String, Object> request) {
+        String username = (String) request.get("username");
+        String password = (String) request.get("password");
+        boolean remember = request.get("remember") != null && (boolean) request.get("remember");
+
+        User user = authenticate(username, password);
+
+        if (user == null) {
+            return ResponseMessage.loginError("用户名或密码错误");
+        }
+
+        long rememberTime = remember
+                ? System.currentTimeMillis() + 7 * 24 * 3600000L     // 记住我7天
+                : System.currentTimeMillis() + 3600000L;              // 否则1个小时
+
+        String token = JWT.create()
+                .withSubject(user.getName())
+                .withExpiresAt(new Date(rememberTime))
+                .sign(Algorithm.HMAC256("SecretKey"));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("user", user);
+        return ResponseMessage.loginSuccess(data);
+    }
+
+    private User authenticate(String username, String password) {
+        User user = userMapper.selectOne(
+                new QueryWrapper<User>().eq("name", username)
+        );
+        return user != null && user.getPassword().equals(password)
+                ? user : null;
     }
 }

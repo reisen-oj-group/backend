@@ -1,9 +1,12 @@
 package com.oj.backend.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.oj.backend.pojo.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +37,13 @@ public class ResponseMessage<T> {
     public static <T> ResponseMessage<T> problemListGetSuccess(T data){
         return new ResponseMessage<T>(200, "列表获取成功", data);
     }
+    public static <T> ResponseMessage<T> loginSuccess(T data) {
+        return new ResponseMessage<T>(200, "登录成功", data);
+    }
+
+    public static <T> ResponseMessage<T> loginError(String message) {
+        return new ResponseMessage<T>(500, message, null);
+    }
 
     public static <T> ResponseMessage<T> configSuccess(T data) {
         return new ResponseMessage<T>(200, "配置导入成功", data);
@@ -42,4 +52,6 @@ public class ResponseMessage<T> {
     public static <T> ResponseMessage<T> configError(String message) {
         return new ResponseMessage<T>(500, message, null);
     }
+
+
 }
