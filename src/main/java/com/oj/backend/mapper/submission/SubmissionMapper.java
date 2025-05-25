@@ -20,9 +20,10 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
                 : Collections.emptyList();
     }
 
-    default Result findResultByProblemId(Integer id) {
+    default Result findResultByProblemId(Integer id, Integer user) {
         Submission submission = selectOne(new QueryWrapper<Submission>()
                 .eq("problem_id", id)
+                .eq("user_id", user)
                 .orderByDesc("submission_time")
                 .last("LIMIT 1")
         );

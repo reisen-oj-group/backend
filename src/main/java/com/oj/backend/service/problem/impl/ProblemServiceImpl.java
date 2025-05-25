@@ -59,7 +59,7 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public ResponseMessage<ProblemResponseDTO> returnProblemMessage(ProblemIdDTO problemIdDTO) {
         Problem problem = problemMapper.selectById(problemIdDTO.getProblem());
-        Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem());
+        Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem(), problemIdDTO.getUser());
         return ResponseMessage.success(new ProblemResponseDTO(problem, result));
     }
 
