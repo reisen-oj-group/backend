@@ -1,5 +1,7 @@
 package com.oj.backend.controller.problem;
 
+import com.oj.backend.dto.problem.ProblemIdDTO;
+import com.oj.backend.dto.problem.ProblemResponseDTO;
 import com.oj.backend.pojo.problem.Problem;
 import com.oj.backend.dto.problem.ProblemListResponse;
 import com.oj.backend.response.ResponseMessage;
@@ -13,6 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class ProblemController {
     @Autowired
     ProblemService problemService;
+
+    @PostMapping("")
+    public ResponseMessage<ProblemResponseDTO> returnProblemMessage(@RequestBody ProblemIdDTO problemIdDTO){
+        return problemService.returnProblemMessage(problemIdDTO);
+    }
 
     @PostMapping("/{problemId}/edit")
     public ResponseMessage<Problem> updateProblem(

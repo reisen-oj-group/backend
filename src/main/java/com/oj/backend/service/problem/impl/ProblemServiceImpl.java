@@ -2,6 +2,8 @@ package com.oj.backend.service.problem.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oj.backend.dto.problem.ProblemIdDTO;
+import com.oj.backend.dto.problem.ProblemResponseDTO;
 import com.oj.backend.mapper.problem.ProblemMapper;
 import com.oj.backend.mapper.submission.SubmissionMapper;
 import com.oj.backend.pojo.problem.Problem;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -53,6 +56,13 @@ public class ProblemServiceImpl implements ProblemService {
                 ResponseMessage.problemUpdateSuccess(problem) : ResponseMessage.problemUpdateError("数据更新失败");
     }
 
+    @Override
+    public ResponseMessage<ProblemResponseDTO> returnProblemMessage(ProblemIdDTO problemIdDTO) {
+        Problem problem = problemMapper.selectById(problemIdDTO.getProblem());
+        Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem());
+        return ResponseMessage.success(new ProblemResponseDTO(problem, result));
+    }
+
     private void buildQueryWrapperForAllList(QueryWrapper<Problem> queryWrapper, ProblemFilter problemFilter) {
         // difficulty查询
         if (problemFilter.getMinDifficulty() != null || problemFilter.getMaxDifficulty() != null) {
@@ -75,12 +85,12 @@ public class ProblemServiceImpl implements ProblemService {
         if (StringUtils.hasText(problemFilter.getKeywords())) {
             queryWrapper.and(w ->
                     w.or().apply("title->>'$.\"zh-CN\"' LIKE {0}", "%" + problemFilter.getKeywords() + "%")
-                    .or().apply("title->>'$.\"en-US\"' LIKE {0}", "%" + problemFilter.getKeywords() + "%")
+                            .or().apply("title->>'$.\"en-US\"' LIKE {0}", "%" + problemFilter.getKeywords() + "%")
             ).or().apply("id = {0}", extractID(problemFilter.getKeywords()));
         }
     }
 
-    private void buildQueryWrapperForUserSubmission(QueryWrapper<Problem> queryWrapper, ProblemFilter problemFilter){
+    private void buildQueryWrapperForUserSubmission(QueryWrapper<Problem> queryWrapper, ProblemFilter problemFilter) {
         // user提交过的problem查询
         if (problemFilter.getUser() != null) {
             queryWrapper.apply(

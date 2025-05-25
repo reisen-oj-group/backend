@@ -19,5 +19,17 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
         ).stream().map(Result::new).toList()
                 : Collections.emptyList();
     }
+
+    default Result findResultByProblemId(Integer id) {
+        Submission submission = selectOne(new QueryWrapper<Submission>()
+                .eq("problem_id", id)
+                .orderByDesc("submission_time")
+                .last("LIMIT 1")
+        );
+
+        return submission != null
+                ? new Result(submission)
+                : null;
+    }
 }
 

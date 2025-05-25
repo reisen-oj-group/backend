@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseMessage<User> returnUserMessage(UserIdDTO userId) {
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("id", userId.getUser()));
+        User user = userMapper.selectById(userId.getUser());
         return user != null
                 ? ResponseMessage.success(user)
                 : ResponseMessage.error("该用户不存在");
