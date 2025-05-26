@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/problem")
+@CrossOrigin
 public class ProblemController {
     @Autowired
     ProblemService problemService;

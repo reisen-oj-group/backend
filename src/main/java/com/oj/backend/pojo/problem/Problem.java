@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 
@@ -22,21 +23,25 @@ public class Problem {
 
     private String status;      // 'public' | 'private' | 'contest'
 
+    @JsonProperty("limit_time")
     @TableField("limit_time")
     private Integer limitTime;
 
+    @JsonProperty("limit_memory")
     @TableField("limit_memory")
     private Integer limitMemory;
 
     @TableField(typeHandler = JacksonTypeHandler.class)     // Mybatis-plus自带管理 JSON 字段，实现序列化与反序列化
-    private Map<String, Object> statement;
+    private Map<String, ProblemStatement> statements;       // 键是语言en-US或者zh-CN
 
     @TableField(typeHandler = JacksonTypeHandler.class)
     private Map<String, String> title;
 
+    @JsonProperty("count_correct")
     @TableField("count_correct")
     private Integer countCorrect;
 
+    @JsonProperty("count_total")
     @TableField("count_total")
     private Integer countTotal;
 
