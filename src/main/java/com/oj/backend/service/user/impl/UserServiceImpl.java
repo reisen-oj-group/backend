@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oj.backend.dto.request.user.LoginRequestDTO;
 import com.oj.backend.dto.response.user.LoginResponseVO;
 import com.oj.backend.dto.request.user.UserIdDTO;
+import com.oj.backend.dto.response.user.UserResponseVO;
 import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.dto.response.common.ResponseMessage;
@@ -69,10 +70,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseMessage<User> returnUserMessage(UserIdDTO userId) {
+    public ResponseMessage<UserResponseVO> returnUserMessage(UserIdDTO userId) {
         User user = userMapper.selectById(userId.getUser());
         return user != null
-                ? ResponseMessage.success(user)
+                ? ResponseMessage.success(new UserResponseVO(user))
                 : ResponseMessage.error("该用户不存在");
     }
 
