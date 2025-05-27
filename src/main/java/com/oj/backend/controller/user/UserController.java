@@ -4,6 +4,7 @@ import com.oj.backend.dto.request.user.LoginRequestDTO;
 import com.oj.backend.dto.response.user.LoginResponseVO;
 import com.oj.backend.dto.request.user.UserIdDTO;
 import com.oj.backend.dto.response.common.ResponseMessage;
+import com.oj.backend.dto.response.user.UserResponseVO;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserController {
     UserService userService;
     @PostMapping("/user")
     //  返回用户信息
-    public ResponseMessage<User> returnUserMessage(@RequestBody UserIdDTO userId){
+    public ResponseMessage<UserResponseVO> returnUserMessage(@RequestBody UserIdDTO userId){
         return userService.returnUserMessage(userId);
     }
 
