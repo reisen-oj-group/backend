@@ -8,8 +8,18 @@ import com.oj.backend.pojo.submission.Result;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The interface Submission mapper.
+ */
 public interface SubmissionMapper extends BaseMapper<Submission> {
-    // 返回当前用户的提交记录(如果有的话),没有就什么都不返回
+    /**
+     * Find results by problems id list.
+     *
+     * @param ids  the ids
+     * @param user the user
+     * @return the list
+     */
+// 返回当前用户的提交记录(如果有的话),没有就什么都不返回
     default List<Result> findResultsByProblemsId(List<Integer> ids, Integer user) {
         return user != null
                 ? selectList(
@@ -20,6 +30,13 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
                 : Collections.emptyList();
     }
 
+    /**
+     * Find result by problem id result.
+     *
+     * @param id   the id
+     * @param user the user
+     * @return the result
+     */
     default Result findResultByProblemId(Integer id, Integer user) {
         Submission submission = selectOne(new QueryWrapper<Submission>()
                 .eq("problem_id", id)

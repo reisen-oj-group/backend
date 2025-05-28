@@ -11,6 +11,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type User.
+ */
 @Data
 @TableName("users")
 public class User {

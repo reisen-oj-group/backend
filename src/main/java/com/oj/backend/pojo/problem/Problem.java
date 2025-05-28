@@ -12,6 +12,9 @@ import org.apache.ibatis.type.JdbcType;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The type Problem.
+ */
 // 注意，此处autoResultMap = true很关键，不知道为什么查询时候返回的statement和title都是BLOB，加上他之后虽然还是，但是已经可以正常返回了
 @Data
 @TableName(value = "problem", autoResultMap = true)

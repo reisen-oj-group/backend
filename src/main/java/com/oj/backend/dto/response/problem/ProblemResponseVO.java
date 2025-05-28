@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Problem response vo.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

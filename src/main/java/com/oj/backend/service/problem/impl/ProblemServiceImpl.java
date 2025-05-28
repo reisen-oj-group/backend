@@ -18,10 +18,19 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * The type Problem service.
+ */
 @Service
 public class ProblemServiceImpl implements ProblemService {
+    /**
+     * The Problem mapper.
+     */
     @Autowired
     ProblemMapper problemMapper;
+    /**
+     * The Submission mapper.
+     */
     @Autowired
     SubmissionMapper submissionMapper;
 

@@ -9,6 +9,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type User response vo.
+ */
 @Data
 public class UserResponseVO {
     private Integer id;
@@ -22,6 +25,11 @@ public class UserResponseVO {
 
     private String avatar;
 
+    /**
+     * Instantiates a new User response vo.
+     *
+     * @param user the user
+     */
     public UserResponseVO(User user){
         this.avatar = user.getAvatar();
         this.id = user.getId();

@@ -3,6 +3,9 @@ package com.oj.backend.pojo.submission;
 import com.oj.backend.pojo.submission.Submission;
 import lombok.Data;
 
+/**
+ * The type Result.
+ */
 @Data
 public class Result {
     private Integer problemId;
@@ -18,6 +21,11 @@ public class Result {
 
     private Integer time;       // 程序用时（取 AC 提交最短用时）
 
+    /**
+     * Instantiates a new Result.
+     *
+     * @param submission the submission
+     */
     public Result(Submission submission) {
         this.problemId = submission.getProblemId();
         this.contestId = submission.getContestId();

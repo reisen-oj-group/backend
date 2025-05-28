@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * The type Problem statement.
+ */
 @Data
 public class ProblemStatement {
     private String background;  // 题目背景

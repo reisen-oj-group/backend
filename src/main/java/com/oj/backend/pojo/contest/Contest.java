@@ -9,6 +9,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Contest.
+ */
 @Data
 @TableName("contest")
 public class Contest {

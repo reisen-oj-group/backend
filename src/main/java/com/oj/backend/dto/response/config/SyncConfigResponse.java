@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Sync config response.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -17,8 +17,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+/**
+ * The type User service.
+ */
 @Service
 public class UserServiceImpl implements UserService {
+    /**
+     * The User mapper.
+     */
     @Autowired
     UserMapper userMapper;
 

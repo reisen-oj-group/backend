@@ -6,10 +6,18 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * The type Mybatis plus config.
+ */
 // 注意：PaginationInnerInterceptor从3.5.9版本开始被单独拆分到了`mybatis-plus-jsqlparser`包，而不是`mybatis-plus-extension`
 // 该配置用于分页查询的自动计数
 @Configuration
 public class MybatisPlusConfig {
+    /**
+     * Mybatis plus interceptor mybatis plus interceptor.
+     *
+     * @return the mybatis plus interceptor
+     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();

@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 
+/**
+ * The type Tag.
+ */
 @Data
 @TableName("tag")
 public class Tag {

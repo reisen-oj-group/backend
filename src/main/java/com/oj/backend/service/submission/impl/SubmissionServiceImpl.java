@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -22,11 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * The type Submission service.
+ */
 @Service
 public class SubmissionServiceImpl implements SubmissionService {
+    /**
+     * The Problem mapper.
+     */
     @Autowired
     ProblemMapper problemMapper;
 
+    /**
+     * The Submission mapper.
+     */
     @Autowired
     SubmissionMapper submissionMapper;
 
@@ -60,7 +68,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             );
 
             // 4.保存代码至临时文件夹并返回代码路径
-            Path codePath = saveCode(submission.getCode(), tmpDir, submission.getLang());
+            Path codePath = saveCode(code, tmpDir, submission.getLang());
 
             if (!compileCode(submission, codePath)) {   // submission的verdict和compile_info信息已在函数内设置完成
                 submissionMapper.updateById(submission);
@@ -93,7 +101,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         // 1.新建一个SubmissionTestCase对象列表，在测试样例中最大用时，最大内存使用，所有测试样例结束后最终的verdict ，存储到submission的字段中
         List<SubmissionTestCase> testCaseList = new ArrayList<>();
         String finalVerdict = "AC";
-        Integer maxTimeUsed = 0, maxMemoryUsed = 0;
+        int maxTimeUsed = 0, maxMemoryUsed = 0;
 
         for (int i = 0; i < examples.size(); i++) {
             Example example = examples.get(i);
@@ -116,7 +124,6 @@ public class SubmissionServiceImpl implements SubmissionService {
 
             if (!testCase.getVerdict().equals("AC")) {
                 finalVerdict = testCase.getVerdict();
-                ;
             }
         }
 
@@ -157,7 +164,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             testCase.setVerdict("TLE");
         } else if (result.getExitCode() != 0) {     // 程序runtime error
             testCase.setVerdict("RE");
-            testCase.setOutput(result.error);
+            testCase.setOutput(result.getError());
         } else {    // 查看程序输出与样例输出是否一致，normalizeOutput去除首尾空白字符，统一换行符为 \n，合并连续空白字符为单个空格
             testCase.setVerdict(
                     normalizeOutput(result.getDataO()).equals(normalizeOutput(dataO)) ? "AC" : "WA"
@@ -169,7 +176,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     // 去除首尾空白字符，统一换行符为 \n，合并连续空白字符为单个空格
     private String normalizeOutput(String dataO) {
-        return dataO.trim().replaceAll("\\r\\n", "\\n").replaceAll("\\s+", " ");
+        return dataO.trim().replaceAll("\\r\\n", "\n").replaceAll("\\s+", " ");
     }
 
     private boolean compileCode(Submission submission, Path codePath) {
@@ -219,9 +226,9 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     private boolean compileCppCode(Submission submission, Path codePath) {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+        // isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 
-        // 配置使用g++编译
+        // 配置使用g++编译,使用docker确保跨平台编译不会出问题
         return compileCode(
                 submission,
                 codePath,
