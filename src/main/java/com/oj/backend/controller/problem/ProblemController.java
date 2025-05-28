@@ -10,18 +10,37 @@ import com.oj.backend.dto.request.problem.ProblemFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type Problem controller.
+ */
 @RestController
 @RequestMapping("/api/problem")
 @CrossOrigin
 public class ProblemController {
+    /**
+     * The Problem service.
+     */
     @Autowired
     ProblemService problemService;
 
+    /**
+     * Return problem message response message.
+     *
+     * @param problemIdDTO the problem id dto
+     * @return the response message
+     */
     @PostMapping("")
     public ResponseMessage<ProblemResponseVO> returnProblemMessage(@RequestBody ProblemIdDTO problemIdDTO){
         return problemService.returnProblemMessage(problemIdDTO);
     }
 
+    /**
+     * Update problem response message.
+     *
+     * @param id      the id
+     * @param problem the problem
+     * @return the response message
+     */
     @PostMapping("/{problemId}/edit")
     public ResponseMessage<Problem> updateProblem(
             @PathVariable("problemId")  Integer id,
@@ -30,6 +49,12 @@ public class ProblemController {
         return problemService.problemUpdate(id, problem);
     }
 
+    /**
+     * Get problem list response message.
+     *
+     * @param problemFilter the problem filter
+     * @return the response message
+     */
     @PostMapping("/list")
     public ResponseMessage<ProblemListVO> getProblemList(@RequestBody ProblemFilter problemFilter){
         return problemService.getProblemList(problemFilter);

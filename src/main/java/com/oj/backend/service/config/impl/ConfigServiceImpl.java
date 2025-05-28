@@ -16,26 +16,41 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * The type Config service.
+ */
 @Service
 public class ConfigServiceImpl implements ConfigService {
+    /**
+     * The Tag mapper.
+     */
     @Autowired
     TagMapper tagMapper;
 
-    // 固定用户语言配置
+    /**
+     * The constant FIXED_USER_LANGS.
+     */
+// 固定用户语言配置
     public static final Map<String, UserLang> FIXED_USER_LANGS = Map.of(
             "en-US", new UserLang("en-US", "English"),
             "zh-CN", new UserLang("zh-CN", "简体中文"),
             "zh-TW", new UserLang("zh-TW", "繁体中文")
     );
 
-    // 固定编程语言配置
+    /**
+     * The constant FIXED_CODE_LANGS.
+     */
+// 固定编程语言配置
     public static final Map<String, CodeLang> FIXED_CODE_LANGS = Map.of(
             "cpp", new CodeLang("cpp", "C++17 (GCC 9)", 1),
             "java", new CodeLang("java", "Java 11", 2),
             "python", new CodeLang("python", "Python 3.8", 3)
     );
 
-    // 固定判题结果配置
+    /**
+     * The constant FIXED_VERDICTS.
+     */
+// 固定判题结果配置
     public static final Map<String, Verdict> FIXED_VERDICTS = Map.of(
             "AC", new Verdict("AC", "Accepted", "AC", "#67C23A"),
             "WA", new Verdict("WA", "Wrong Answer", "WA", "#F56C6C"),
@@ -46,7 +61,10 @@ public class ConfigServiceImpl implements ConfigService {
             "UKE", new Verdict("UKE", "Unknown Error", "UKE", "#909399")
     );
 
-    // 固定难度等级配置
+    /**
+     * The constant FIXED_DIFFICULTIES.
+     */
+// 固定难度等级配置
     public static final List<Difficulty> FIXED_DIFFICULTIES = List.of(
             new Difficulty(800, 1099, "入门"),
             new Difficulty(1100, 1399, "简单"),

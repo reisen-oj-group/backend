@@ -1,6 +1,10 @@
 package com.oj.backend.pojo.submission;
 
 import lombok.Data;
+
+/**
+ * The type Submission test case.
+ */
 // Submission用类，用于存储提交的testcase，id与verdict为必须
 @Data
 public class SubmissionTestCase {

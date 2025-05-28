@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Submission.
+ */
 // autoResultMap = true进行自动转换
 @Data
 @TableName(value = "submission", autoResultMap = true)
@@ -81,6 +84,11 @@ public class Submission {
     //  output?: string
     //  checker?: string
 
+    /**
+     * Sets code.
+     *
+     * @param code the code
+     */
     public void setCode(String code) {
         this.code = code;
         this.codeLength = (code != null) ? code.length() : 0;

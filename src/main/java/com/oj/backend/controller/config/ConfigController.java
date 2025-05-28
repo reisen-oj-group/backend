@@ -8,10 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The type Config controller.
+ */
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
 public class ConfigController {
+    /**
+     * The Config service.
+     */
     @Autowired
     ConfigService configService;
 
@@ -21,6 +27,11 @@ public class ConfigController {
 //        return ResponseMessage.configSuccess(configService.getConfig());
 //    }
 
+    /**
+     * Sync config sync config response.
+     *
+     * @return the sync config response
+     */
     @GetMapping("/sync-config")
     public SyncConfigResponse syncConfig(){
         return configService.getConfig();

@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * The type Problem filter.
+ */
 @Data
 public class ProblemFilter {
     private Integer minDifficulty;

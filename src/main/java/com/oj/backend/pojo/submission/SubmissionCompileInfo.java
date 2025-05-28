@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Submission compile info.
+ */
 // Submission用，存储编译信息
 @Data
 @NoArgsConstructor

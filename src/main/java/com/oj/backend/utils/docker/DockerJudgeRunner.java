@@ -14,13 +14,25 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.oj.backend.service.config.impl.ConfigServiceImpl.FIXED_CODE_LANGS;
 
+/**
+ * The type Docker judge runner.
+ */
 @Data
 public class DockerJudgeRunner {
+    /**
+     * Run container docker run result.
+     *
+     * @param tmpDir      the tmp dir
+     * @param lang        the lang
+     * @param dataI       the data i
+     * @param limitTime   the limit time
+     * @param limitMemory the limit memory
+     * @return the docker run result
+     */
     public static DockerRunResult runContainer(Path tmpDir,
                                                String lang,
                                                String dataI,
@@ -67,7 +79,7 @@ public class DockerJudgeRunner {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            if (process != null && process.isAlive()){
+            if (process != null && process.isAlive()) {
                 process.destroyForcibly();
             }
         }
@@ -96,7 +108,7 @@ public class DockerJudgeRunner {
     private static List<String> buildDockerCommand(Path tmpDir, String lang, Integer limitTime, Integer limitMemory) {
         List<String> cmd = new ArrayList<>(
                 Arrays.asList(
-                        "docker", "run", "--rm",   // 启动一个新容器,容器退出后自动删除（避免残留）
+                        "docker", "run", "--rm", "-i",   // 启动一个新容器,容器退出后自动删除（避免残留）
                         "-v", tmpDir + ":/code",   // 将工作目录挂载到docker的/code文件夹下
                         "-w", "/code",             // 设置容器工作目录
                         "--network=none",          // 禁用网络
@@ -112,22 +124,25 @@ public class DockerJudgeRunner {
             case ("java"):
                 cmd.addAll(Arrays.asList(
                         "openjdk:11",   // 使用java11的docker
-                        "timeout", String.valueOf(limitTime * FIXED_CODE_LANGS.get(lang).getRatio()),  // 限制运行时间,为运行慢的语言乘以倍率
-                        "java", "-Xmx" + (limitMemory - 16) + "m", "Main" //设置启动参数，设置 JVM 的 最大堆内存，同时为非堆内存预留16MB空间
+                        "sh", "-c",
+                        "timeout " + (limitTime * FIXED_CODE_LANGS.get(lang).getRatio()) +  // 限制运行时间,为运行慢的语言乘以倍率
+                        " java -Xmx"+ (limitMemory - 16) + "m Main" //设置启动参数，设置 JVM 的 最大堆内存，同时为非堆内存预留16MB空间
                 ));
                 break;
             case ("cpp"):
                 cmd.addAll(Arrays.asList(
                         "gcc:9",
-                        "timeout", String.valueOf(limitTime * FIXED_CODE_LANGS.get(lang).getRatio()), // 必须放在镜像名的后面，不然会被当成镜像
-                        "./main"
+                        "sh", "-c",
+                        "timeout " + (limitTime * FIXED_CODE_LANGS.get(lang).getRatio()) + // 必须放在镜像名的后面，不然会被当成镜像
+                        " ./main"
                 ));
                 break;
             case ("python"):
                 cmd.addAll(Arrays.asList(
                         "python:3.8",
-                        "timeout", String.valueOf(limitTime * FIXED_CODE_LANGS.get(lang).getRatio()),
-                        "python", "-B", "main.py"   // 禁止生成 __pycache__ 目录
+                        "sh", "-c",
+                        "timeout "+ (limitTime * FIXED_CODE_LANGS.get(lang).getRatio()) +
+                        " python -B main.py"    // 禁止生成 __pycache__ 目录
                 ));
                 break;
             default:
@@ -136,9 +151,12 @@ public class DockerJudgeRunner {
         return cmd;
     }
 
+    /**
+     * The type Docker run result.
+     */
     @Data
     public static class DockerRunResult {
-        public String error = "";           // 错误信息
+        private String error = "";           // 错误信息
         private String verdict = "AC";      // 运行结果默认AC
         private String dataO = "";          // 运行输出默认无
         private Integer timeUsed = 0;       // 运行时间默认0
