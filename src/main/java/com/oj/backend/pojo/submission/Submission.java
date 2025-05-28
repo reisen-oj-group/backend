@@ -10,84 +10,112 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
- * The type Submission.
+ * 提交记录实体类
+ * <p>对应数据库 submission 表，存储用户提交的代码及评测结果</p>
+ *
+ * <p><b>特殊处理：</b>autoResultMap=true 用于处理复杂类型字段的自动转换</p>
  */
-// autoResultMap = true进行自动转换
 @Data
 @TableName(value = "submission", autoResultMap = true)
 public class Submission {
+    /** 自增主键 */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    /** 题目ID */
     @JsonProperty("problem_id")
     @TableField("problem_id")
     private Integer problemId;
 
+    /** 用户ID */
     @JsonProperty("user_id")
     @TableField("user_id")
     private Integer userId;
 
+    /**
+     * 比赛ID
+     * <p>普通提交时为null</p>
+     */
     @JsonProperty("contest_id")
     @TableField("contest_id")
     private Integer contestId;
 
+    /** 提交时间 */
     @JsonProperty("submission_time")
     @TableField("submission_time")
-    private LocalDateTime submissionTime;   // 提交时间
-
-    @JsonProperty("evaluation_time")
-    @TableField("evaluation_time")
-    private LocalDateTime evaluationTime;   // 评测时间
-
-    private String lang;                    // 评测语言,C++17 (GCC9) Java 11 Python 3.8
-
-    private String verdict;                 // 评测结果，使用缩写
-//    AC: { id: 'AC', description: 'Accepted', abbr: 'AC', color: '#67C23A' },
-//    WA: { id: 'WA', description: 'Wrong Answer', abbr: 'WA', color: '#F56C6C' },
-//    RE: { id: 'RE', description: 'Runtime Error', abbr: 'RE', color: '#6A3BC0' },
-//    TLE: { id: 'TLE', description: 'Time Limit Exceeded', abbr: 'TLE', color: '#E6A23C' },
-//    MLE: { id: 'MLE', description: 'Memory Limit Exceeded', abbr: 'MLE', color: '#E6A23C' },
-//    CE: { id: 'CE', description: 'Compile Error', abbr: 'CE', color: '#909399' },
-//    UKE: { id: 'UKE', description: 'Unknown Error', abbr: 'UKE', color: '#909399' },
-
-    private Integer score;                  // 得分，主要用于部分分
-
-    @JsonProperty("time_used")              // JsonProperty用于绑定前端json对应键值
-    @TableField("time_used")
-    private Integer timeUsed;               // 评测用时
-
-    @JsonProperty("memory_used")
-    @TableField("memory_used")
-    private Integer memoryUsed;             // 占用空间
-
-    private String code;
-
-    @JsonProperty("code_length")
-    @TableField("code_length")
-    private Integer codeLength;             // 代码长度
-
-    @JsonProperty("compile_info")
-    @TableField(typeHandler = JacksonTypeHandler.class, value = "compile_info")
-    private SubmissionCompileInfo compileInfo;        // 两个键值对，success: boolean；message: string
-
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<SubmissionTestCase> testcases;    // 测试点详细信息
-    //  id: number
-    //  verdict: string
-    //  time?: number
-    //  memory?: number
-    //  score?: number
-    //  input?: string
-    //  output?: string
-    //  checker?: string
+    private LocalDateTime submissionTime;
 
     /**
-     * Sets code.
+     * 评测完成时间
+     * <p>未完成评测时为null</p>
+     */
+    @JsonProperty("evaluation_time")
+    @TableField("evaluation_time")
+    private LocalDateTime evaluationTime;
+
+    /**
+     * 编程语言
+     * <p>示例值：</p>
+     * <ul>
+     *   <li>"C++17 (GCC9)"</li>
+     *   <li>"Java 11"</li>
+     *   <li>"Python 3.8"</li>
+     * </ul>
+     */
+    private String lang;
+
+    /**
+     * 评测结果缩写
+     * @see <a href="#verdict-取值说明">verdict 取值说明</a>
+     */
+    private String verdict;
+
+    /**
+     * 得分（百分制）
+     * <p>部分分制题目有效，AC时通常为100</p>
+     */
+    private Integer score;
+
+    /** 程序运行用时(ms) */
+    @JsonProperty("time_used")
+    @TableField("time_used")
+    private Integer timeUsed;
+
+    /** 内存占用(KB) */
+    @JsonProperty("memory_used")
+    @TableField("memory_used")
+    private Integer memoryUsed;
+
+    /** 源代码内容 */
+    private String code;
+
+    /** 代码长度（字符数） */
+    @JsonProperty("code_length")
+    @TableField("code_length")
+    private Integer codeLength;
+
+    /**
+     * 编译信息
+     * @see SubmissionCompileInfo
+     */
+    @JsonProperty("compile_info")
+    @TableField(typeHandler = JacksonTypeHandler.class, value = "compile_info")
+    private SubmissionCompileInfo compileInfo;
+
+    /**
+     * 测试点详情列表
+     * @see SubmissionTestCase
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<SubmissionTestCase> testcases;
+
+    /**
+     * 设置代码并自动计算长度
+     * <p>会同步更新codeLength字段</p>
      *
-     * @param code the code
+     * @param code 用户源代码
      */
     public void setCode(String code) {
         this.code = code;

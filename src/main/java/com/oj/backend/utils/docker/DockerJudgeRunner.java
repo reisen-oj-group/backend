@@ -19,19 +19,38 @@ import java.util.concurrent.TimeUnit;
 import static com.oj.backend.service.config.impl.ConfigServiceImpl.FIXED_CODE_LANGS;
 
 /**
- * The type Docker judge runner.
+ * Docker评测运行器
+ * <p>
+ * 提供通过Docker容器安全运行用户代码的功能，支持多种编程语言的隔离执行。
+ * 主要特性包括：
+ * <ul>
+ *   <li>资源限制（CPU、内存、运行时间）</li>
+ *   <li>安全隔离（无网络、只读文件系统、非root用户）</li>
+ *   <li>多语言支持（Java、C++、Python等）</li>
+ *   <li>运行结果收集（输出、错误、时间、内存等）</li>
+ * </ul>
+ * </p>
  */
 @Data
 public class DockerJudgeRunner {
     /**
-     * Run container docker run result.
+     * 在Docker容器中运行用户代码
      *
-     * @param tmpDir      the tmp dir
-     * @param lang        the lang
-     * @param dataI       the data i
-     * @param limitTime   the limit time
-     * @param limitMemory the limit memory
-     * @return the docker run result
+     * @param tmpDir      临时工作目录路径，包含用户代码文件
+     * @param lang        编程语言类型（java/cpp/python）
+     * @param dataI       程序输入数据
+     * @param limitTime   时间限制（单位：秒）
+     * @param limitMemory 内存限制（单位：MB）
+     * @return 包含运行结果的DockerRunResult对象，包含：
+     *         <ul>
+     *           <li>程序输出(dataO)</li>
+     *           <li>错误信息(error)</li>
+     *           <li>运行时间(timeUsed)</li>
+     *           <li>内存使用(memoryUsed)</li>
+     *           <li>退出码(exitCode)</li>
+     *           <li>判定结果(verdict)</li>
+     *         </ul>
+     * @throws RuntimeException 当Docker执行或IO操作出现异常时抛出
      */
     public static DockerRunResult runContainer(Path tmpDir,
                                                String lang,
@@ -87,6 +106,11 @@ public class DockerJudgeRunner {
         return result;
     }
 
+    /**
+     * 获取当前容器内存使用量
+     *
+     * @return 内存使用量（单位：MB），出错时返回0
+     */
     private static Integer getMemoryUsed() {
         try {
             // 直接读取当前容器的内存统计（单位：MB）
@@ -100,11 +124,27 @@ public class DockerJudgeRunner {
     }
 
 
-    // 将
+    /**
+     * 读取输入流内容
+     *
+     * @param inputStream 要读取的输入流
+     * @return 流内容的字符串表示
+     * @throws IOException 当读取失败时抛出
+     */
     private static String readStream(InputStream inputStream) throws IOException {
         return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
 
+    /**
+     * 构建Docker运行命令
+     *
+     * @param tmpDir      临时工作目录路径
+     * @param lang        编程语言类型
+     * @param limitTime   时间限制（单位：秒）
+     * @param limitMemory 内存限制（单位：MB）
+     * @return 构造好的Docker命令参数列表
+     * @throws IllegalArgumentException 当不支持的语言类型传入时抛出
+     */
     private static List<String> buildDockerCommand(Path tmpDir, String lang, Integer limitTime, Integer limitMemory) {
         List<String> cmd = new ArrayList<>(
                 Arrays.asList(
@@ -152,7 +192,10 @@ public class DockerJudgeRunner {
     }
 
     /**
-     * The type Docker run result.
+     * Docker运行结果封装类
+     * <p>
+     * 包含程序运行的各类指标数据和状态信息，用于评测结果判定。
+     * </p>
      */
     @Data
     public static class DockerRunResult {

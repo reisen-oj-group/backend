@@ -7,21 +7,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * The type Mybatis plus config.
+ * MyBatis-Plus 配置类.
+ *
+ * <p>主要作用：
+ * <ul>
+ *   <li>配置分页拦截器（{@link PaginationInnerInterceptor}）</li>
+ *   <li>为MySQL数据库的分页查询提供自动计数功能</li>
+ * </ul>
+ *
+ * <p><strong>版本说明：</strong>
+ * 从3.5.9版本开始，{@code PaginationInnerInterceptor} 被拆分到
+ * {@code mybatis-plus-jsqlparser} 包而非原来的 {@code mybatis-plus-extension} 包
+ *
+ * @see MybatisPlusInterceptor MyBatis-Plus拦截器主体
+ * @see PaginationInnerInterceptor 分页SQL生成拦截器
  */
-// 注意：PaginationInnerInterceptor从3.5.9版本开始被单独拆分到了`mybatis-plus-jsqlparser`包，而不是`mybatis-plus-extension`
-// 该配置用于分页查询的自动计数
 @Configuration
 public class MybatisPlusConfig {
     /**
-     * Mybatis plus interceptor mybatis plus interceptor.
+     * 创建并配置MyBatis-Plus拦截器.
      *
-     * @return the mybatis plus interceptor
+     * <p>当前配置：
+     * <ul>
+     *   <li>添加MySQL分页拦截器</li>
+     *   <li>自动处理{@code Page<T>}对象的分页逻辑</li>
+     * </ul>
+     *
+     * @return 配置完成的拦截器实例
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        //  PaginationInnerInterceptor：MyBatis-Plus 的分页拦截器，自动将 Page<T> 对象转换为分页 SQL（如 LIMIT）。
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
