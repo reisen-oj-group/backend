@@ -8,7 +8,7 @@ import com.oj.backend.pojo.user.User;
 import com.oj.backend.dto.response.common.ResponseMessage;
 
 public interface UserService {
-    ResponseMessage<User> register(User user);
+    ResponseMessage<UserResponseVO> register(User user);
     ResponseMessage<LoginResponseVO> login(LoginRequestDTO request);
 
     ResponseMessage<UserResponseVO> returnUserMessage(UserIdDTO userId);

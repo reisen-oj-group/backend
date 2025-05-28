@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
 
     @Override
-    public ResponseMessage<User> register(User user) {
+    public ResponseMessage<UserResponseVO> register(User user) {
         // 设置默认角色为普通用户
         user.setRole(0);
         // 设置注册时间为当前时间
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
         userMapper.insert(user);
 
-        return ResponseMessage.registerSuccess(user);
+        return ResponseMessage.registerSuccess(new UserResponseVO(user));
     }
 
     @Override

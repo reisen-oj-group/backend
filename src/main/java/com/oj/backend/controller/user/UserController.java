@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/auth/register")
     //  用户注册
-    public ResponseMessage<User> insert(@RequestBody User user) {
+    public ResponseMessage<UserResponseVO> insert(@RequestBody User user) {
         return userService.register(user);
     }
     @PostMapping("/auth/login")
