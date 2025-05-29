@@ -1,6 +1,7 @@
 package com.oj.backend.pojo.submission;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 提交记录的测试用例详情
@@ -9,6 +10,7 @@ import lombok.Data;
  * <p><b>必填字段：</b> id, verdict</p>
  */
 @Data
+@NoArgsConstructor
 public class SubmissionTestCase {
     /**
      * 测试点ID
@@ -57,4 +59,9 @@ public class SubmissionTestCase {
      * <p>自定义检查器的诊断信息</p>
      */
     private String checker;
+
+    public SubmissionTestCase(Integer id, String verdict){
+        this.id = id;
+        this.verdict = verdict;
+    }
 }

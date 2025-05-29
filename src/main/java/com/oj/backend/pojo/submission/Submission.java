@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oj.backend.dto.request.submission.SubmissionDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +22,14 @@ import java.util.List;
  * <p><b>特殊处理：</b>autoResultMap=true 用于处理复杂类型字段的自动转换</p>
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @TableName(value = "submission", autoResultMap = true)
 public class Submission {
     /** 自增主键 */
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /** 题目ID */
     @JsonProperty("problem_id")
@@ -120,5 +127,20 @@ public class Submission {
     public void setCode(String code) {
         this.code = code;
         this.codeLength = (code != null) ? code.length() : 0;
+    }
+
+//    public Submission(SubmissionDTO submissionDTO){
+//        this.code = submissionDTO.getCode();
+//        this.lang = submissionDTO.getLang();
+//        this.problemId = submissionDTO.getProblem();
+//    }
+
+    // 删除原构造函数，改为静态工厂方法，原来的方法会覆盖掉无参构造，当查询数据库时，MyBatis 必须依赖无参构造来反射创建对象，通过反射注入字段值，返回组装好的对象
+    public static Submission fromDTO(SubmissionDTO dto) {
+        return Submission.builder()
+                .code(dto.getCode())
+                .lang(dto.getLang())
+                .problemId(dto.getProblem())
+                .build();
     }
 }

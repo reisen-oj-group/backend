@@ -1,7 +1,12 @@
 package com.oj.backend.service.submission;
 
+import com.oj.backend.dto.request.submission.RecordDTO;
+import com.oj.backend.dto.request.submission.RecordFilter;
+import com.oj.backend.dto.request.submission.SubmissionDTO;
 import com.oj.backend.dto.response.common.ResponseMessage;
-import com.oj.backend.pojo.submission.Submission;
+import com.oj.backend.dto.response.submission.RecordListVO;
+import com.oj.backend.dto.response.submission.RecordVO;
+import com.oj.backend.dto.response.submission.SubmissionVO;
 
 /**
  * 提交评测服务接口
@@ -14,7 +19,7 @@ public interface SubmissionService {
     /**
      * 评测用户提交的代码
      *
-     * @param submission 提交实体对象，包含：
+     * @param submissionDTO 提交实体对象，包含：
      *                   <ul>
      *                     <li>problemId - 题目ID</li>
      *                     <li>code - 用户提交的源代码</li>
@@ -26,5 +31,9 @@ public interface SubmissionService {
      *           <li>失败时返回错误信息</li>
      *         </ul>
      */
-    ResponseMessage<Submission> judgeSubmission(Submission submission);
+    ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO);
+
+    ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO);
+
+    ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter);
 }

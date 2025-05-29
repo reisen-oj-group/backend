@@ -2,11 +2,14 @@ package com.oj.backend.controller.problem;
 
 import com.oj.backend.dto.request.problem.ProblemFilter;
 import com.oj.backend.dto.request.problem.ProblemIdDTO;
+import com.oj.backend.dto.request.submission.SubmissionDTO;
 import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.dto.response.problem.ProblemListVO;
 import com.oj.backend.dto.response.problem.ProblemResponseVO;
+import com.oj.backend.dto.response.submission.RecordVO;
 import com.oj.backend.pojo.problem.Problem;
 import com.oj.backend.service.problem.ProblemService;
+import com.oj.backend.service.submission.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +37,12 @@ public class ProblemController {
      */
     @Autowired
     ProblemService problemService;
+
+    /**
+     * The Submission service.
+     */
+    @Autowired
+    SubmissionService submissionService;
 
     /**
      * 获取题目详细信息.
@@ -95,5 +104,16 @@ public class ProblemController {
     @PostMapping("/list")
     public ResponseMessage<ProblemListVO> getProblemList(@RequestBody ProblemFilter problemFilter) {
         return problemService.getProblemList(problemFilter);
+    }
+
+    /**
+     * Judge submission response message.
+     *
+     * @param submissionDTO the submission info
+     * @return the response message
+     */
+    @PostMapping("/submit")
+    public ResponseMessage<RecordVO> judgeSubmission(@RequestBody SubmissionDTO submissionDTO){
+        return submissionService.judgeSubmission(submissionDTO);
     }
 }

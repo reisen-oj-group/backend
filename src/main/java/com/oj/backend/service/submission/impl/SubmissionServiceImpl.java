@@ -1,13 +1,23 @@
 package com.oj.backend.service.submission.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oj.backend.dto.request.submission.RecordDTO;
+import com.oj.backend.dto.request.submission.RecordFilter;
+import com.oj.backend.dto.request.submission.SubmissionDTO;
 import com.oj.backend.dto.response.common.ResponseMessage;
+import com.oj.backend.dto.response.submission.RecordListVO;
+import com.oj.backend.dto.response.submission.RecordVO;
+import com.oj.backend.dto.response.submission.SubmissionVO;
 import com.oj.backend.mapper.problem.ProblemMapper;
 import com.oj.backend.mapper.submission.SubmissionMapper;
+import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.problem.Example;
 import com.oj.backend.pojo.problem.Problem;
+import com.oj.backend.pojo.submission.Record;
 import com.oj.backend.pojo.submission.Submission;
 import com.oj.backend.pojo.submission.SubmissionCompileInfo;
 import com.oj.backend.pojo.submission.SubmissionTestCase;
+import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.submission.SubmissionService;
 import com.oj.backend.utils.docker.DockerJudgeRunner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,34 +52,58 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     SubmissionMapper submissionMapper;
 
+    @Autowired
+    UserMapper userMapper;
+
     /**
      * 评测用户提交的代码
      *
-     * @param submission 提交实体对象，包含：
-     *                   - problemId: 题目ID
-     *                   - code: 用户提交的源代码
-     *                   - lang: 编程语言类型
+     * @param submissionDTO 提交实体对象，包含：
+     *                      - problemId: 题目ID
+     *                      - code: 用户提交的源代码
+     *                      - lang: 编程语言类型
      * @return 包含评测结果的响应消息：
-     *         - 成功时返回完整评测结果
-     *         - 失败时返回错误信息
+     * - 成功时返回完整评测结果
+     * - 失败时返回错误信息
      */
     @Override
-    public ResponseMessage<Submission> judgeSubmission(Submission submission) {
+    public ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO) {
+        // 根据提交信息构造提交类
+        // Submission submission = new Submission(submissionDTO);
+        Submission submission = Submission.fromDTO(submissionDTO);
+
+        submission.setProblemId(submissionDTO.getProblem());
+
+        // 1.获取题目和提交的代码以及测试用例我们默认使用en-US
+        Problem problem = problemMapper.selectById(submission.getProblemId());
+        String code = submissionDTO.getCode();
+        List<Example> enExamples = problem.getStatements().get("en-US").getExamples();
+
+        Integer length = submissionDTO.getCode() == null ? 0 : submissionDTO.getCode().length();
+
         // 设置提交时间
         submission.setSubmissionTime(LocalDateTime.now());
+        submission.setCodeLength(length);
+        submission.setCode(submissionDTO.getCode());
+        submission.setLang(submissionDTO.getLang());
+        submission.setTestcases(enExamples
+                .stream()
+                .map(example -> new SubmissionTestCase(enExamples.indexOf(example) + 1, null))
+                .toList()
+        );
 
         try {
-            // 1.首先获取题目和提交的代码以及测试用例我们默认使用en-US
-            Problem problem = problemMapper.selectById(submission.getProblemId());
-            String code = submission.getCode();
-            List<Example> enExamples = problem.getStatements().get("en-US").getExamples();
+            List<Example> examples = problem.getStatements().get("en-US").getExamples();
             // List<Example> zhExamples = problem.getStatements().get("zh-CN").getExamples();
 
             // 2.解析测试用例
-            if (enExamples == null) { // 没有测试用例，设置为unknown error
+            if (examples == null) { // 没有测试用例，设置为unknown error
                 submission.setVerdict("UKE");
-                submissionMapper.updateById(submission);
-                return ResponseMessage.error("测试用例为空");
+                submissionMapper.insert(submission);
+
+                RecordVO recordVO = new RecordVO(submission.getId());
+
+                return ResponseMessage.success(recordVO);
             }
 
             // 3.创建临时文件夹存储代码
@@ -86,8 +120,11 @@ public class SubmissionServiceImpl implements SubmissionService {
             Path codePath = saveCode(code, tmpDir, submission.getLang());
 
             if (!compileCode(submission, codePath)) {   // submission的verdict和compile_info信息已在函数内设置完成
-                submissionMapper.updateById(submission);
-                return ResponseMessage.error(submission.getCompileInfo().getMessage());
+                submissionMapper.insert(submission);
+
+                RecordVO recordVO = new RecordVO(submission.getId());
+
+                return ResponseMessage.success(recordVO);
             }
 
             // 5.运行测试用例
@@ -101,15 +138,57 @@ public class SubmissionServiceImpl implements SubmissionService {
             }
 
             problemMapper.updateById(problem);
-            submissionMapper.updateById(submission);
 
-            return ResponseMessage.success(submission);
+            // 将提交信息存入数据库
+            submissionMapper.insert(submission);
+
+            RecordVO recordVO = new RecordVO(submission.getId());
+
+            return ResponseMessage.success(recordVO);
 
         } catch (IOException e) {
             submission.setVerdict("UKE");
-            submissionMapper.updateById(submission);
-            return ResponseMessage.error("错误");
+            submissionMapper.insert(submission);
+
+            RecordVO recordVO = new RecordVO(submission.getId());
+
+            return ResponseMessage.success(recordVO);
         }
+    }
+
+    @Override
+    public ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO) {
+        Submission submission = submissionMapper.selectById(recordDTO.getId());
+        Problem problem = problemMapper.selectById(submission.getProblemId());
+        User user = userMapper.selectById(submission.getUserId());
+
+        return ResponseMessage.success(new SubmissionVO(new Record(submission, user, problem)));
+    }
+
+    @Override
+    public ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter) {
+        // 先查询分页的submission
+        Page<Submission> page = new Page<>(recordFilter.getPage(), recordFilter.getPageSize());
+        submissionMapper.selectPage(page, null);
+
+        // 再遍历submission查找对应的user和problem
+        List<Record> records = page.getRecords().stream()
+                .map(submission -> {
+                    User user = userMapper.selectById(submission.getUserId());
+                    Problem problem = problemMapper.selectById(submission.getProblemId());
+                    return new Record(submission, user, problem);
+                }).toList();
+
+        // 构造新的record页
+        Page<Record> recordPage = Page.of(
+                page.getCurrent(),
+                page.getSize(),
+                page.getTotal()
+        );
+
+        recordPage.setRecords(records);
+
+        return ResponseMessage.success(new RecordListVO((int) recordPage.getTotal(), recordPage.getRecords()));
     }
 
     /**
@@ -240,8 +319,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     /**
      * 通用代码编译方法
      *
-     * @param submission           提交记录
-     * @param codePath             代码文件路径
+     * @param submission            提交记录
+     * @param codePath              代码文件路径
      * @param processBuilderCreator 创建编译命令的工厂方法
      * @return 编译是否成功
      */
@@ -336,8 +415,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     /**
      * 保存用户代码到临时文件
      *
-     * @param code    源代码内容
-     * @param path    保存路径
+     * @param code     源代码内容
+     * @param path     保存路径
      * @param codeLang 编程语言类型
      * @return 代码文件路径
      * @throws IOException 当文件操作失败时抛出

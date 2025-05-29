@@ -1,5 +1,6 @@
 package com.oj.backend.controller.config;
 
+import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.dto.response.config.SyncConfigResponse;
 import com.oj.backend.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,25 +38,26 @@ public class ConfigController {
     ConfigService configService;
 
     // 历史实现（保留注释作为演进记录）
-    //    @GetMapping("/sync-config")
-    //    public ResponseMessage<SyncConfigResponse> syncConfig(){
-    //        return ResponseMessage.configSuccess(configService.getConfig());
-    //    }
+        @GetMapping("/sync-config")
+        public ResponseMessage<SyncConfigResponse> syncConfig(){
+            return ResponseMessage.configSuccess(configService.getConfig());
+        }
 
-    /**
-     * 获取同步配置.
-     *
-     * <p><strong>接口说明：</strong>
-     * <ul>
-     *   <li>当前版本直接返回 {@link SyncConfigResponse} 原始数据结构</li>
-     *   <li>历史版本曾使用 {@code ResponseMessage} 包装响应（见注释代码）</li>
-     * </ul>
-     *
-     * @return 完整的同步配置对象
-     * @see GetMapping GET请求映射
-     */
-    @GetMapping("/sync-config")
-    public SyncConfigResponse syncConfig(){
-        return configService.getConfig();
-    }
+//    /**
+//     * 获取同步配置.
+//     *
+//     * <p><strong>接口说明：</strong>
+//     * <ul>
+//     *   <li>当前版本直接返回 {@link SyncConfigResponse} 原始数据结构</li>
+//     *   <li>历史版本曾使用 {@code ResponseMessage} 包装响应（见注释代码）</li>
+//     * </ul>
+//     *
+//     * @return 完整的同步配置对象
+//     * @see GetMapping GET请求映射
+//     */
+//
+//    @GetMapping("/sync-config")
+//    public SyncConfigResponse syncConfig(){
+//        return configService.getConfig();
+//    }
 }
