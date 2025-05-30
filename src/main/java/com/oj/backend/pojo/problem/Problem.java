@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -46,14 +47,14 @@ public class Problem {
     /**
      * 时间限制(ms)
      */
-    @JsonProperty("limit_time")
+    // @JsonProperty("limit_time")
     @TableField("limit_time")
     private Integer limitTime;
 
     /**
      * 内存限制(KB)
      */
-    @JsonProperty("limit_memory")
+    // @JsonProperty("limit_memory")
     @TableField("limit_memory")
     private Integer limitMemory;
 
@@ -74,16 +75,29 @@ public class Problem {
     private Map<String, String> title;
 
     /** 通过次数 */
-    @JsonProperty("count_correct")
+    // @JsonProperty("count_correct")
     @TableField("count_correct")
     private Integer countCorrect;
 
     /** 提交次数 */
-    @JsonProperty("count_total")
+    // @JsonProperty("count_total")
     @TableField("count_total")
     private Integer countTotal;
 
     /** 难度系数 */
     private Integer difficulty;
+
+    @TableField("create_at")
+    private LocalDateTime createdAt;
+
+    @TableField("update_at")
+    private LocalDateTime updatedAt;
+
+    @TableField("has_config")
+    private boolean hasConfig;
+
+    @JsonProperty("hasTestdata")
+    @TableField("has_test_data")
+    private boolean hasTestData;
 }
 

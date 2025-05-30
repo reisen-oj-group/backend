@@ -1,6 +1,8 @@
 package com.oj.backend.dto.request.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 用户标识数据传输对象.
@@ -9,6 +11,8 @@ import lombok.Data;
  * @see com.oj.backend.pojo.user.User 关联的用户实体类
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserIdDTO {
     /**
      * 用户唯一标识符

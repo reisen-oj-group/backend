@@ -1,5 +1,6 @@
 package com.oj.backend.pojo.submission;
 
+import com.oj.backend.dto.response.user.UserResponseVO;
 import com.oj.backend.pojo.problem.Problem;
 import com.oj.backend.pojo.user.User;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Record {
     private SubmissionCompileInfo compile;
     private Detail detail;
     private Problem problem;
-    private User user;
+    private UserResponseVO user;
 
     public Record(Submission submission, User user, Problem problem){
         this.id = submission.getId();
@@ -31,7 +32,7 @@ public class Record {
         this.length = submission.getCodeLength();
         this.code = submission.getCode();
         this.compile = submission.getCompileInfo();
-        this.user = user;
+        this.user = new UserResponseVO(user);
         this.problem = problem;
     }
 }

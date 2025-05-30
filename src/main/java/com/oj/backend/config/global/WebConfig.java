@@ -1,8 +1,11 @@
 package com.oj.backend.config.global;
 
+import com.oj.backend.utils.jwt.JwtInterceptor;
 import com.oj.backend.utils.web.StringToIntegerConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -21,7 +24,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @see FormatterRegistry 类型转换器注册器
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+    private final JwtInterceptor jwtInterceptor;
+
     /**
      * 添加自定义类型转换器.
      *
@@ -37,5 +43,22 @@ public class WebConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         //        WebMvcConfigurer.super.addFormatters(registry);
         registry.addConverter(new StringToIntegerConverter());
+    }
+
+    /**
+     * 注册JWT拦截器
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+//        WebMvcConfigurer.super.addInterceptors(registry);
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns(
+                        "/api/auth/login",
+                        "/api/auth/register",
+                        "/api/sync-config",
+                        "/api/user",
+                        "/api/problem/list"     // 该页面前端已显式传入userid
+                );
     }
 }

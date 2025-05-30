@@ -49,10 +49,11 @@ public interface ProblemService {
      * <p>根据题目ID获取完整题目信息，并包含指定用户的提交记录</p>
      *
      * @param problemIdDTO 参数传输对象，包含：
-     * <ul>
-     *   <li><b>problem</b> - 题目ID（必填）</li>
-     *   <li><b>user</b> - 用户ID（可选，用于获取该用户的提交结果）</li>
-     * </ul>
+     *                     <ul>
+     *                       <li><b>problem</b> - 题目ID（必填）</li>
+     *                       <li><b>user</b> - 用户ID（用于获取该用户的提交结果）</li>
+     *                     </ul>
+     * @param userId
      * @return 标准响应消息，数据部分包含：
      * <pre>
      * {@code
@@ -62,14 +63,15 @@ public interface ProblemService {
      * </pre>
      * @apiNote 当user参数为null时，result字段返回null
      */
-    ResponseMessage<ProblemResponseVO> returnProblemMessage(ProblemIdDTO problemIdDTO);
+    ResponseMessage<ProblemResponseVO> returnProblemMessage(ProblemIdDTO problemIdDTO, Integer userId);
 
     /**
      * 更新题目信息
      * <p>根据题目ID全量更新题目数据，需包含完整题目对象</p>
      *
-     * @param id 要更新的题目ID（路径参数）
+     * @param id      要更新的题目ID（路径参数）
      * @param problem 包含新数据的题目对象（请求体）
+     * @param userId
      * @return 标准响应消息，成功时返回更新后的题目实体，失败时返回错误信息
      * <ul>
      *   <li>题目不存在（404）</li>
@@ -77,5 +79,5 @@ public interface ProblemService {
      * </ul>
      * @implSpec 实现类应保证ID参数与题目对象内的ID一致性
      */
-    ResponseMessage<Problem> problemUpdate(Integer id, Problem problem);
+    ResponseMessage<Problem> problemUpdate(Integer id, Problem problem, Integer userId);
 }

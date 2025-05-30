@@ -1,7 +1,5 @@
 package com.oj.backend.service.user.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.oj.backend.dto.request.user.LoginRequestDTO;
 import com.oj.backend.dto.request.user.UserIdDTO;
@@ -11,11 +9,12 @@ import com.oj.backend.dto.response.user.UserResponseVO;
 import com.oj.backend.mapper.user.UserMapper;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.oj.backend.utils.jwt.JwtUtil;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 用户服务实现类
@@ -29,6 +28,7 @@ import java.util.Date;
  * </ul>
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     /**
      * 用户数据访问器
@@ -37,15 +37,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
+    private final JwtUtil jwtUtil;
+
     /**
      * 用户注册
      * <p>处理新用户注册请求，默认赋予普通用户角色(role=0)</p>
      *
      * @param user 包含注册信息的用户实体，必须包含：
-     * <ul>
-     *   <li><b>name</b> - 用户名（唯一标识）</li>
-     *   <li><b>password</b> - 密码（明文存储，实际生产环境应加密）</li>
-     * </ul>
+     *             <ul>
+     *               <li><b>name</b> - 用户名（唯一标识）</li>
+     *               <li><b>password</b> - 密码（明文存储，实际生产环境应加密）</li>
+     *             </ul>
      * @return 注册结果响应消息：
      * <ul>
      *   <li>成功 - 返回用户基本信息（不含密码）</li>
@@ -78,11 +80,11 @@ public class UserServiceImpl implements UserService {
      * <p>处理用户登录请求，验证通过后签发JWT令牌</p>
      *
      * @param request 登录请求数据传输对象，包含：
-     * <ul>
-     *   <li><b>username</b> - 用户名（必填）</li>
-     *   <li><b>password</b> - 密码（必填）</li>
-     *   <li><b>remember</b> - 记住我选项（可选）</li>
-     * </ul>
+     *                <ul>
+     *                  <li><b>username</b> - 用户名（必填）</li>
+     *                  <li><b>password</b> - 密码（必填）</li>
+     *                  <li><b>remember</b> - 记住我选项（可选）</li>
+     *                </ul>
      * @return 登录结果响应消息：
      * <ul>
      *   <li>成功 - 返回包含JWT令牌和用户信息的响应体</li>
@@ -108,14 +110,8 @@ public class UserServiceImpl implements UserService {
             return ResponseMessage.loginError("用户名或密码错误");
         }
 
-        long rememberTime = remember
-                ? System.currentTimeMillis() + 7 * 24 * 3600000L     // 记住我7天
-                : System.currentTimeMillis() + 3600000L;              // 否则1个小时
-
-        String token = JWT.create()
-                .withSubject(user.getName())
-                .withExpiresAt(new Date(rememberTime))
-                .sign(Algorithm.HMAC256("SecretKey"));
+        // 生成token
+        String token = jwtUtil.generateToken(user, remember);
 
         LoginResponseVO data = new LoginResponseVO();
         data.setToken(token);
@@ -128,9 +124,9 @@ public class UserServiceImpl implements UserService {
      * <p>根据用户ID查询用户公开信息</p>
      *
      * @param userId 用户ID数据传输对象，包含：
-     * <ul>
-     *   <li><b>user</b> - 要查询的用户ID（必填）</li>
-     * </ul>
+     *               <ul>
+     *                 <li><b>user</b> - 要查询的用户ID（必填）</li>
+     *               </ul>
      * @return 查询结果响应消息：
      * <ul>
      *   <li>成功 - 返回用户公开信息视图对象</li>

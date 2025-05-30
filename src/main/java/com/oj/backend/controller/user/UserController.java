@@ -7,6 +7,7 @@ import com.oj.backend.dto.response.user.LoginResponseVO;
 import com.oj.backend.dto.response.user.UserResponseVO;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.user.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,6 +94,12 @@ public class UserController {
     @PostMapping("/auth/login")
     public ResponseMessage<LoginResponseVO> login(@RequestBody LoginRequestDTO request) {
         return userService.login(request);
+    }
+
+    @PostMapping("/auth/me")    // 用于网页刷新时返回当前用户
+    public ResponseMessage<UserResponseVO> returnUser(HttpServletRequest request){
+        Integer userId = (Integer) request.getAttribute("userId");
+        return  userService.returnUserMessage(new UserIdDTO(userId));
     }
 }
 

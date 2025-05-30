@@ -90,14 +90,16 @@ public class ProblemServiceImpl implements ProblemService {
      *
      * @param id      要更新的题目ID
      * @param problem 包含更新数据的题目对象
+     * @param userId
      * @return 更新结果响应消息，包含以下可能状态：
      * <ul>
      *   <li>成功 - 返回更新后的题目数据</li>
      *   <li>失败 - 返回错误提示信息</li>
      * </ul>
      */
+    // 暂时没实现根据user的角色判断该用户能否更新problem
     @Override
-    public ResponseMessage<Problem> problemUpdate(Integer id, Problem problem) {
+    public ResponseMessage<Problem> problemUpdate(Integer id, Problem problem, Integer userId) {
         problem.setId(id);
         return problemMapper.updateById(problem) > 0 ?
                 ResponseMessage.problemUpdateSuccess(problem) : ResponseMessage.problemUpdateError("数据更新失败");
@@ -112,12 +114,13 @@ public class ProblemServiceImpl implements ProblemService {
      *                       <li>problem - 题目ID</li>
      *                       <li>user - 当前用户ID</li>
      *                     </ul>
+     * @param userId
      * @return 包含题目详情和用户提交结果的响应消息
      */
     @Override
-    public ResponseMessage<ProblemResponseVO> returnProblemMessage(ProblemIdDTO problemIdDTO) {
+    public ResponseMessage<ProblemResponseVO> returnProblemMessage(ProblemIdDTO problemIdDTO, Integer userId) {
         Problem problem = problemMapper.selectById(problemIdDTO.getProblem());
-        Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem(), problemIdDTO.getUser());
+        Result result = submissionMapper.findResultByProblemId(problemIdDTO.getProblem(), userId);
 
         if (problem == null) {
             return ResponseMessage.error("问题不存在");

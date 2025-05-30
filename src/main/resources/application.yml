@@ -16,3 +16,9 @@ mybatis-plus:
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
     default-map-type-handler: com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler  # 新增
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+jwt:
+  secret: "SecretKey"
+  expire: 3600000    # 1小时
+  remember-expire: 604800000 # 7天
+  issuer: "oj_system"

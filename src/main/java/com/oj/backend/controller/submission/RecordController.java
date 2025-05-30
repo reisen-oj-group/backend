@@ -6,6 +6,8 @@ import com.oj.backend.dto.response.common.ResponseMessage;
 import com.oj.backend.dto.response.submission.RecordListVO;
 import com.oj.backend.dto.response.submission.SubmissionVO;
 import com.oj.backend.service.submission.SubmissionService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +25,21 @@ public class RecordController {
     SubmissionService submissionService;
 
     @PostMapping("")
-    public ResponseMessage<SubmissionVO> returnRecord(@RequestBody RecordDTO recordDTO){
-        return submissionService.returnRecord(recordDTO);
+    public ResponseMessage<SubmissionVO> returnRecord(
+            HttpServletRequest request,
+            @RequestBody RecordDTO recordDTO
+    ){
+        Integer userId = (Integer) request.getAttribute("userId");
+        return submissionService.returnRecord(recordDTO, userId);
     }
 
 
     @PostMapping("/list")
-    public ResponseMessage<RecordListVO> returnRecordList(@RequestBody RecordFilter recordFilter){
-        return submissionService.returnRecordList(recordFilter);
+    public ResponseMessage<RecordListVO> returnRecordList(
+            HttpServletRequest request,
+            @RequestBody RecordFilter recordFilter
+    ){
+        Integer userId = (Integer) request.getAttribute("userId");
+        return submissionService.returnRecordList(recordFilter, userId);
     }
 }

@@ -1,6 +1,9 @@
 package com.oj.backend.service.submission.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.oj.backend.dto.request.problem.ProblemFilter;
 import com.oj.backend.dto.request.submission.RecordDTO;
 import com.oj.backend.dto.request.submission.RecordFilter;
 import com.oj.backend.dto.request.submission.SubmissionDTO;
@@ -20,6 +23,8 @@ import com.oj.backend.pojo.submission.SubmissionTestCase;
 import com.oj.backend.pojo.user.User;
 import com.oj.backend.service.submission.SubmissionService;
 import com.oj.backend.utils.docker.DockerJudgeRunner;
+import com.oj.backend.utils.jwt.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +44,7 @@ import java.util.function.Function;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class SubmissionServiceImpl implements SubmissionService {
     /**
      * 题目数据访问接口
@@ -55,6 +61,9 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     UserMapper userMapper;
 
+    private final JwtUtil jwtUtil;
+
+
     /**
      * 评测用户提交的代码
      *
@@ -62,17 +71,19 @@ public class SubmissionServiceImpl implements SubmissionService {
      *                      - problemId: 题目ID
      *                      - code: 用户提交的源代码
      *                      - lang: 编程语言类型
+     * @param userId
      * @return 包含评测结果的响应消息：
      * - 成功时返回完整评测结果
      * - 失败时返回错误信息
      */
     @Override
-    public ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO) {
-        // 根据提交信息构造提交类
+    public ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO, Integer userId) {
+        // 根据提交信息构造提交类，不能用构造函数，原因在submission类中
         // Submission submission = new Submission(submissionDTO);
         Submission submission = Submission.fromDTO(submissionDTO);
 
         submission.setProblemId(submissionDTO.getProblem());
+        submission.setUserId(userId);
 
         // 1.获取题目和提交的代码以及测试用例我们默认使用en-US
         Problem problem = problemMapper.selectById(submission.getProblemId());
@@ -157,7 +168,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO) {
+    public ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO, Integer userId) {
         Submission submission = submissionMapper.selectById(recordDTO.getId());
         Problem problem = problemMapper.selectById(submission.getProblemId());
         User user = userMapper.selectById(submission.getUserId());
@@ -166,10 +177,13 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter) {
+    public ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter, Integer userId) {
         // 先查询分页的submission
         Page<Submission> page = new Page<>(recordFilter.getPage(), recordFilter.getPageSize());
-        submissionMapper.selectPage(page, null);
+        submissionMapper.selectPage(
+                page,
+                buildQueryWrapperForAllList(new QueryWrapper<Submission>(), recordFilter)
+        );
 
         // 再遍历submission查找对应的user和problem
         List<Record> records = page.getRecords().stream()
@@ -189,6 +203,36 @@ public class SubmissionServiceImpl implements SubmissionService {
         recordPage.setRecords(records);
 
         return ResponseMessage.success(new RecordListVO((int) recordPage.getTotal(), recordPage.getRecords()));
+    }
+
+    private QueryWrapper<Submission>  buildQueryWrapperForAllList(QueryWrapper<Submission> queryWrapper, RecordFilter recordFilter) {
+
+        queryWrapper.eq(recordFilter.getLang() != null, "lang", recordFilter.getLang())
+                .eq(recordFilter.getProblem() != null, "problem_id", recordFilter.getProblem())
+                .eq(recordFilter.getVerdict() != null, "verdict", recordFilter.getVerdict());
+
+        // 2. 处理用户过滤条件
+        if (StringUtils.isNotBlank(recordFilter.getUser())) {
+            // 尝试将user参数解析为ID
+            try {
+                Integer userId = Integer.valueOf(recordFilter.getUser());
+                queryWrapper.eq("user_id", userId);
+            } catch (NumberFormatException e) {
+                // 如果不是数字，则按用户名查询
+                List<Integer> userIds = userMapper.selectList(
+                        new QueryWrapper<User>().like("name", recordFilter.getUser())
+                ).stream().map(User::getId).toList();
+
+                if (!userIds.isEmpty()) {
+                    queryWrapper.in("user_id", userIds);
+                } else {
+                    // 如果没有匹配用户，确保返回空结果
+                    queryWrapper.eq("1", "0");
+                }
+            }
+        }
+
+        return queryWrapper;
     }
 
     /**

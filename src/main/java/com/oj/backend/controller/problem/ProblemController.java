@@ -10,8 +10,11 @@ import com.oj.backend.dto.response.submission.RecordVO;
 import com.oj.backend.pojo.problem.Problem;
 import com.oj.backend.service.problem.ProblemService;
 import com.oj.backend.service.submission.SubmissionService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * 题目管理API控制器.
@@ -61,8 +64,12 @@ public class ProblemController {
      * @see PostMapping POST请求映射
      */
     @PostMapping("")
-    public ResponseMessage<ProblemResponseVO> returnProblemMessage(@RequestBody ProblemIdDTO problemIdDTO) {
-        return problemService.returnProblemMessage(problemIdDTO);
+    public ResponseMessage<ProblemResponseVO> returnProblemMessage(
+            HttpServletRequest request,
+            @RequestBody ProblemIdDTO problemIdDTO
+    ) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        return problemService.returnProblemMessage(problemIdDTO, userId);
     }
 
     /**
@@ -81,10 +88,12 @@ public class ProblemController {
      */
     @PostMapping("/{problemId}/edit")
     public ResponseMessage<Problem> updateProblem(
+            HttpServletRequest request,
             @PathVariable("problemId") Integer id,
-            @RequestBody Problem problem
+            @RequestBody Map<String,Problem> problem
     ) {
-        return problemService.problemUpdate(id, problem);
+        Integer userId = (Integer) request.getAttribute("userId");
+        return problemService.problemUpdate(id, problem.get("problem"), userId);
     }
 
     /**
@@ -102,7 +111,9 @@ public class ProblemController {
      *         {@link ProblemListVO} 包含分页信息和题目数据
      */
     @PostMapping("/list")
-    public ResponseMessage<ProblemListVO> getProblemList(@RequestBody ProblemFilter problemFilter) {
+    public ResponseMessage<ProblemListVO> getProblemList(
+            @RequestBody ProblemFilter problemFilter
+    ) {
         return problemService.getProblemList(problemFilter);
     }
 
@@ -113,7 +124,11 @@ public class ProblemController {
      * @return the response message
      */
     @PostMapping("/submit")
-    public ResponseMessage<RecordVO> judgeSubmission(@RequestBody SubmissionDTO submissionDTO){
-        return submissionService.judgeSubmission(submissionDTO);
+    public ResponseMessage<RecordVO> judgeSubmission(
+            HttpServletRequest request,
+            @RequestBody SubmissionDTO submissionDTO
+    ){
+        Integer userId = (Integer) request.getAttribute("userId");
+        return submissionService.judgeSubmission(submissionDTO ,userId);
     }
 }

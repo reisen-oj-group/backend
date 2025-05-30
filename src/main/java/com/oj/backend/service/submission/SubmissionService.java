@@ -20,20 +20,21 @@ public interface SubmissionService {
      * 评测用户提交的代码
      *
      * @param submissionDTO 提交实体对象，包含：
-     *                   <ul>
-     *                     <li>problemId - 题目ID</li>
-     *                     <li>code - 用户提交的源代码</li>
-     *                     <li>lang - 编程语言类型</li>
-     *                   </ul>
+     *                      <ul>
+     *                        <li>problemId - 题目ID</li>
+     *                        <li>code - 用户提交的源代码</li>
+     *                        <li>lang - 编程语言类型</li>
+     *                      </ul>
+     * @param userId
      * @return 包含评测结果的响应消息：
-     *         <ul>
-     *           <li>成功时返回完整评测结果(Submission对象)</li>
-     *           <li>失败时返回错误信息</li>
-     *         </ul>
+     * <ul>
+     *   <li>成功时返回完整评测结果(Submission对象)</li>
+     *   <li>失败时返回错误信息</li>
+     * </ul>
      */
-    ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO);
+    ResponseMessage<RecordVO> judgeSubmission(SubmissionDTO submissionDTO, Integer userId);
 
-    ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO);
+    ResponseMessage<SubmissionVO> returnRecord(RecordDTO recordDTO, Integer userId);
 
-    ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter);
+    ResponseMessage<RecordListVO> returnRecordList(RecordFilter recordFilter, Integer userId);
 }
